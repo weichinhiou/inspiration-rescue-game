@@ -35,7 +35,7 @@ h1 { margin: 0; font-size: clamp(24px, 3.6vw, 30px); letter-spacing: .035em; lin
 .top-note { margin-left: auto; text-align: right; color: #7a705e; font-size: 12px; line-height: 1.7; }
 .top-note span { color: #9b917f; font-size: 10px; }
 .hud { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 13px; }
-.hud-card { min-height: 70px; display: flex; flex-direction: column; justify-content: center; padding: 10px 15px; border: 1px solid rgba(224,216,200,.9); border-radius: 15px; background: rgba(255,253,247,.83); box-shadow: 0 5px 16px rgba(64,69,61,.04); }
+.hud-card { min-height: 70px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 10px 15px; border: 1px solid rgba(224,216,200,.9); border-radius: 15px; background: rgba(255,253,247,.83); box-shadow: 0 5px 16px rgba(64,69,61,.04); }
 .hud-label { color: var(--muted); font-size: 11px; font-weight: 600; }
 .hud-card strong { margin-top: 1px; font-size: 23px; line-height: 1.25; font-variant-numeric: tabular-nums; }
 .timer-card strong { color: var(--teal-dark); }
