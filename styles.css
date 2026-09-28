@@ -204,7 +204,7 @@ h1 { margin: 0; font-size: clamp(24px, 3.6vw, 30px); letter-spacing: .035em; lin
 html { min-height: 100%; }
 body {
   min-height: 100vh;
-  background: #183d3d url("./assets/game-desk-background.webp") center center / cover fixed no-repeat;
+  background: #183d3d url("./assets/game-desk-background-fast.webp") center center / cover fixed no-repeat;
   color: #f9f0dd;
 }
 body::before { content: ""; position: fixed; z-index: 0; inset: 0; background: linear-gradient(180deg, #102e2e35, #102e2e12 44%, #102e2e45); pointer-events: none; }
@@ -378,7 +378,7 @@ h1 { color: #fff8e9; text-shadow: 0 2px 10px #07191877; }
 html { min-height: 100%; }
 body {
   min-height: 100vh;
-  background: #6e492c url("./assets/game-desk-background.webp") center center / cover fixed no-repeat;
+  background: #6e492c url("./assets/game-desk-background-fast.webp") center center / cover fixed no-repeat;
   color: #493723;
 }
 body::before {
@@ -508,7 +508,7 @@ h1 { color: #412f1e; text-shadow: 0 1px #fff5e0a6; }
   .quote-reveal blockquote { font-size: 11px; }
 }
 @media (max-width: 600px) and (orientation: portrait) {
-  body { background-image: url("./assets/game-desk-background-mobile.webp"); background-position: center top; background-size: cover; background-attachment: fixed; }
+  body { background-image: url("./assets/game-desk-background-mobile-fast.webp"); background-position: center top; background-size: cover; background-attachment: fixed; }
   body::before { background: linear-gradient(180deg,#f2e4ca12,#f2e4ca08 66%,#4a301a1e); }
 }
 @media (max-width: 520px) {
@@ -984,6 +984,8 @@ h1 { font-size: clamp(28px, 3.8vw, 34px); }
 .portal-return-button:hover { transform: translateY(-3px) scale(1.01); }
 .portal-return-button:active { transform: translateY(1px) scale(.99); }
 .portal-return-button:focus-visible { outline: 3px solid #f2d482; outline-offset: 4px; }
+
+.developer-credit { margin: 10px 0 0; color: #f4dfbd; font-size: clamp(12px, 1.7vw, 14px); line-height: 1.5; text-align: center; letter-spacing: .02em; }
 @media (max-width: 900px) {
   .side-column { display: flex; flex-direction: column; gap: 12px; }
   .portal-return-button { width: min(86%, 330px); margin-top: 12px; }

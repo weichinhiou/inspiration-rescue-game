@@ -21,10 +21,10 @@
   ];
   const timeTrapLabels = ["臨時約診", "臨床案件", "緊急交班"];
   const powerItems = {
-    double: { label: "下次 ×2", art: "double-score-powerup.webp", aria: "加倍便條，下次分數加減乘以二" },
-    timeBonus: { label: "+5 秒", art: "time-bonus-notebook.png", aria: "筆記本道具，加 5 秒" },
-    slowSpawn: { label: "慢速 3 秒", art: "slow-spawn-pocketwatch.png", aria: "懷錶道具，生成速度放慢 3 秒" },
-    teamwork: { label: "同仁一起討論", art: "teamwork-idea-powerup.png", aria: "同仁一起討論，增加 3 分、目前缺的名句字母 1 個與 3 秒" }
+    double: { label: "下次 ×2", art: "double-score-powerup-fast.webp", aria: "加倍便條，下次分數加減乘以二" },
+    timeBonus: { label: "+5 秒", art: "time-bonus-notebook-fast.webp", aria: "筆記本道具，加 5 秒" },
+    slowSpawn: { label: "慢速 3 秒", art: "slow-spawn-pocketwatch-fast.webp", aria: "懷錶道具，生成速度放慢 3 秒" },
+    teamwork: { label: "同仁一起討論", art: "teamwork-idea-powerup-fast.webp", aria: "同仁一起討論，增加 3 分、目前缺的名句字母 1 個與 3 秒" }
   };
   const quoteTexts = [
     "The noblest question in the world is what good may I do in it?",
@@ -685,7 +685,7 @@
     slot.dataset.letter = letter;
     slot.dataset.rare = String(rare);
     slot.setAttribute("aria-label", `${rare ? "罕見靈感 +3 分" : "靈感 +1 分"}：${label}，字母 ${letter}`);
-    const art = rare ? "rare-inspiration.png" : "idea-mascot.webp";
+    const art = rare ? "rare-inspiration-fast.webp" : "idea-mascot-fast.webp";
     const rareBadge = rare ? '<span class="rare-mark" aria-hidden="true">★ +3</span>' : "";
     slot.innerHTML = `<span class="slot-id">${String(index).padStart(2, "0")}</span><span class="letter-badge">${letter}</span>${rareBadge}<span class="idea-content"><img class="object-art idea-art" src="./assets/${art}" alt="" /><span class="idea-label">${label}</span></span>`;
     scheduleSlotExpiry(slot, lifetime, () => {
@@ -705,7 +705,7 @@
     slot.dataset.distractionLabel = distraction.label;
     const isTimeTrap = distraction.kind === "time-trap";
     slot.setAttribute("aria-label", isTimeTrap ? `紅色干擾物：${distraction.label}，誤點減少 5 秒` : `紅標干擾物：${distraction.label}，誤點扣兩分`);
-    const art = isTimeTrap ? "time-penalty-timer.png" : "red-distraction.webp";
+    const art = isTimeTrap ? "time-penalty-timer-fast.webp" : "red-distraction-fast.webp";
     const mark = isTimeTrap ? "−5s" : "−2";
     const label = distraction.label;
     slot.innerHTML = `<span class="slot-id">${String(index).padStart(2, "0")}</span><span class="wrong-mark">${mark}</span><span class="block-content"><img class="object-art distraction-art" src="./assets/${art}" alt="" /><span class="block-label">${label}</span></span>`;

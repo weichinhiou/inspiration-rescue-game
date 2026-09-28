@@ -12,6 +12,10 @@
 
 將 `index.html`、`styles.css`、`game.js`、`assets/` 和 `README.md` 放在儲存庫根目錄，推送後在 GitHub 儲存庫的 **Settings → Pages** 選擇從 `main` 分支的根目錄部署。頁面使用相對路徑載入 CSS、JavaScript 與圖片，可用於 `https://<帳號>.github.io/<儲存庫>/` 這類專案頁面。
 
+## 圖片載入紀錄
+
+圖片首次載入偏慢的原因、ast.webp 壓縮處理、驗證範圍與後續測試清單，請見 [docs/LESSONS_LEARNED.md](docs/LESSONS_LEARNED.md)。
+
 ## 目前原型內容
 
 - 60 秒單機回合、即時分數與連擊提示
