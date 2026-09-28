@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#ae7640" />
+    <meta name="description" content="靈感搶救戰：在忙碌的工作日裡，趁靈感冒出來時把它接住。" />
+    <title>靈感搶救戰｜v7.4.4</title>
+    <link rel="stylesheet" href="./styles.css?v=7.4.4" />
+  </head>
+  <body>
+    <main class="game-shell">
+      <header class="topbar">
+        <div class="brand-mark"><img src="./assets/idea-mascot.webp" alt="靈感燈泡" /></div>
+        <div class="brand-copy">
+          <p class="eyebrow">IDEA 儲思盆・靈感快閃任務</p>
+          <h1>靈感搶救戰</h1>
+          <p class="subtitle">工作再忙，也要把一瞬靈感接住。</p>
+        </div>
+        <div class="top-tools">
+          <button id="sound-toggle" class="sound-toggle" type="button" aria-pressed="true" aria-label="關閉遊戲音效">音效 開</button>
+        </div>
+      </header>
+
+      <section class="hud" aria-label="遊戲狀態">
+        <div class="hud-card timer-card">
+          <span class="hud-label">剩餘時間</span>
+          <strong id="timer">01:00</strong>
+        </div>
+        <div class="hud-card score-card">
+          <span class="hud-label">搶救到的靈感</span>
+          <strong><span id="score">0</span><small> 點</small></strong>
+        </div>
+        <div class="hud-card combo-card">
+          <span class="hud-label">連續接住</span>
+          <strong id="combo">×0</strong>
+          <span id="power-status" class="power-status" hidden>下次正負分數 ×2</span>
+        </div>
+      </section>
+
+      <section class="play-layout" aria-label="遊戲區">
+        <div class="board-column">
+          <div class="board-heading">
+            <span class="round-badge" id="round-state">準備開始</span>
+          </div>
+
+          <div class="interruptions" aria-live="polite">
+            <div id="event-banner" class="event-banner idle" role="status">
+              <span class="event-icon" aria-hidden="true">通知</span>
+              <span id="event-text">罕見靈感 +3；筆記本加秒；懷錶放慢；臨床急件誤點 −5 秒。</span>
+            </div>
+          </div>
+
+          <div class="grid-wrap">
+            <div id="countdown-overlay" class="countdown-overlay" hidden aria-live="assertive" role="status">
+              <span id="countdown-number" class="countdown-number">3</span>
+            </div>
+            <div class="grid" id="grid" aria-label="桌面上的九個靈感洞口">
+              <button class="slot" data-slot="0" aria-label="靈感洞口 1" disabled><span class="slot-id">01</span><span class="slot-empty">···</span></button>
+              <button class="slot" data-slot="1" aria-label="靈感洞口 2" disabled><span class="slot-id">02</span><span class="slot-empty">···</span></button>
+              <button class="slot" data-slot="2" aria-label="靈感洞口 3" disabled><span class="slot-id">03</span><span class="slot-empty">···</span></button>
+              <button class="slot" data-slot="3" aria-label="靈感洞口 4" disabled><span class="slot-id">04</span><span class="slot-empty">···</span></button>
+              <button class="slot" data-slot="4" aria-label="靈感洞口 5" disabled><span class="slot-id">05</span><span class="slot-empty">···</span></button>
+              <button class="slot" data-slot="5" aria-label="靈感洞口 6" disabled><span class="slot-id">06</span><span class="slot-empty">···</span></button>
+              <button class="slot" data-slot="6" aria-label="靈感洞口 7" disabled><span class="slot-id">07</span><span class="slot-empty">···</span></button>
+              <button class="slot" data-slot="7" aria-label="靈感洞口 8" disabled><span class="slot-id">08</span><span class="slot-empty">···</span></button>
+              <button class="slot" data-slot="8" aria-label="靈感洞口 9" disabled><span class="slot-id">09</span><span class="slot-empty">···</span></button>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button id="start-button" class="primary-button" type="button">開始搶救</button>
+            <button id="pause-button" class="secondary-button pause-button" type="button" hidden disabled>暫停</button>
+          </div>
+        </div>
+
+        <aside class="side-column" aria-label="靈感筆記本與名句拼圖">
+          <div class="notebook-card" id="notebook">
+            <div class="notebook-top"><span>靈感筆記本</span><span class="page-no">IDEA / 01</span></div>
+            <div class="notebook-paper" id="notebook-paper">
+              <span class="notebook-placeholder">同類靈感會疊成一疊<br />字母也會一起收集</span>
+            </div>
+            <div class="notebook-footer"><span class="notebook-dot"></span>靈感張數 <strong id="saved-count">0</strong></div>
+          </div>
+
+          <div class="word-card quote-card">
+            <div class="word-card-heading"><div><h3>名句拼圖</h3><p id="quote-author">Poor Richard 格言選</p></div><span class="word-bonus" id="word-bonus">整句 +90</span></div>
+            <div class="word-slots" id="word-slots" aria-label="密語字母進度"></div>
+            <p class="word-hint" id="word-hint">字母位置與重複次數都要集齊。</p>
+            <div class="quote-reveal" id="quote-reveal" hidden aria-live="polite">
+              <div class="quote-reveal-kicker"><span>✦</span> 新靈感解鎖</div>
+              <blockquote id="quote-revealed-text"></blockquote>
+              <p class="quote-meaning-label">這句話的意思</p>
+              <p class="quote-meaning" id="quote-meaning"></p>
+            </div>
+            <div class="quote-progress"><span id="quote-progress">0 / 0 個字母</span><span>集滿額外獎勵</span></div>
+          </div>
+        </aside>
+      </section>
+
+      <a class="portal-return-button" href="https://ksvgh-anywhere-door.vercel.app/" target="_blank" rel="noopener noreferrer" aria-label="開啟任意門，回去寫靈感">
+        <img src="./assets/portal-return-button-v2.png" alt="回去任意門寫靈感" />
+      </a>
+
+    </main>
+
+    <div id="game-mallet" class="game-mallet" aria-hidden="true">
+      <img class="mallet-ready-pose" src="./assets/idea-mallet-table-contact-preview-v8.png" alt="" />
+      <img class="mallet-impact-pose" src="./assets/idea-mallet-impact-tpose.png" alt="" />
+    </div>
+    <div class="toast" id="toast" aria-live="polite"></div>
+    <div id="rules-backdrop" class="rules-backdrop" hidden>
+      <section id="rules-dialog" class="rules-dialog" role="dialog" aria-modal="true" aria-labelledby="rules-title" tabindex="-1">
+        <div class="rules-heading">
+          <div>
+            <p class="rules-kicker" id="rules-kicker">開局前看一眼</p>
+            <h2 id="rules-title">搶救圖例</h2>
+          </div>
+          <span class="rules-duration" id="rules-duration">60 秒挑戰</span>
+        </div>
+        <div class="rules-grid">
+          <article class="rule-item">
+            <img src="./assets/idea-mascot.webp" alt="" />
+            <div><h3>靈感字條</h3><p>點中 +1 分，並收集名句字母。</p></div>
+          </article>
+          <article class="rule-item">
+            <img src="./assets/rare-inspiration.png" alt="" />
+            <div><h3>星光靈感</h3><p>點中 +3 分，也會收集字母。</p></div>
+          </article>
+          <article class="rule-item">
+            <img src="./assets/double-score-powerup.webp" alt="" />
+            <div><h3>紫色 ×2 便條</h3><p>下次得分或扣分都加倍。</p></div>
+          </article>
+          <article class="rule-item">
+            <img src="./assets/time-bonus-notebook.png" alt="" />
+            <div><h3>加秒筆記本</h3><p>每次增加 5 秒，沒有加時上限。</p></div>
+          </article>
+          <article class="rule-item">
+            <img src="./assets/teamwork-idea-powerup.png" alt="" />
+            <div><h3>同仁一起討論</h3><p>每局優先出現，漏接後會再來。收下 +3 分、補上目前缺少的名句字母 1 個，再增加 3 秒。</p></div>
+          </article>
+          <article class="rule-item">
+            <img src="./assets/slow-spawn-pocketwatch.png" alt="" />
+            <div><h3>慢速懷錶</h3><p>接下來 3 秒，物件出現速度變慢。</p></div>
+          </article>
+          <article class="rule-item rule-warn">
+            <img src="./assets/red-distraction.webp" alt="" />
+            <div><h3>紅色干擾</h3><p>電話、會議、待辦、刀房通知或交資料；誤點 −2 分並隨機失去一個字母。</p></div>
+          </article>
+          <article class="rule-item rule-warn">
+            <img src="./assets/time-penalty-timer.png" alt="" />
+            <div><h3>臨床急件</h3><p>隨機顯示「臨時約診／臨床案件／緊急交班」；誤點減少 5 秒。</p></div>
+          </article>
+        </div>
+        <div class="rules-actions">
+          <button id="rules-cancel-button" class="secondary-button" type="button">回到桌面</button>
+          <button id="rules-start-button" class="primary-button" type="button">知道了，開始倒數</button>
+        </div>
+      </section>
+    </div>
+    <div class="result-backdrop" id="result-backdrop" hidden>
+      <section id="result-dialog" class="result-dialog" role="dialog" aria-modal="true" aria-labelledby="result-title" tabindex="-1">
+        <div class="result-stamp" aria-hidden="true">GOOD JOB!!</div>
+        <p class="eyebrow">本局完成</p>
+        <h2 id="result-title">靈感都接住了！</h2>
+        <p class="result-score">你搶救到 <strong id="final-score">0</strong> 個靈感</p>
+        <p class="result-copy">真正的點子，可以帶去 IDEA 儲思盆慢慢整理。</p>
+        <div class="result-actions">
+          <button id="replay-button" class="primary-button" type="button">再玩一次</button>
+          <button id="close-result" class="secondary-button" type="button">回到桌面看本局結果</button>
+        </div>
+      </section>
+    </div>
+    <script src="./game.js?v=7.4.4"></script>
+  </body>
+</html>
