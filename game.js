@@ -5,8 +5,6 @@
   const BONUS_SECONDS_PER_PICKUP = 5;
   const TEAMWORK_BONUS_POINTS = 3;
   const TEAMWORK_BONUS_SECONDS = 3;
-  const TEAMWORK_INITIAL_WAVE_INTERVAL = 3;
-  const TEAMWORK_FINAL_WAVE_INTERVAL = 2;
   const TIME_TRAP_PENALTY = 5;
   const SLOW_SPAWN_DURATION_MS = 3000;
   const SLOW_SPAWN_FACTOR = 1.7;
@@ -26,7 +24,7 @@
     double: { label: "下次 ×2", art: "double-score-powerup-fast.webp", aria: "加倍便條，下次分數加減乘以二" },
     timeBonus: { label: "+5 秒", art: "time-bonus-notebook-fast.webp", aria: "筆記本道具，加 5 秒" },
     slowSpawn: { label: "慢速 3 秒", art: "slow-spawn-pocketwatch-fast.webp", aria: "懷錶道具，生成速度放慢 3 秒" },
-    teamwork: { label: "同仁一起討論", art: "teamwork-idea-powerup-fast.webp", aria: "同仁一起討論，依目前名句補 1 個缺少的字母，增加 3 分與 3 秒；同一句可再次出現" }
+    teamwork: { label: "同仁一起討論", art: "teamwork-idea-powerup-fast.webp", aria: "同仁一起討論，增加 3 分、目前缺的名句字母 1 個與 3 秒" }
   };
   const quoteTexts = [
     "The noblest question in the world is what good may I do in it?",
@@ -775,10 +773,8 @@
     open = availableSlots();
     if (!powerAlreadyVisible && open.length && waveNumber > 1) {
       const inFinalPhase = elapsed >= (ROUND_SECONDS * 2) / 3;
-      const teamworkWaveInterval = inFinalPhase
-        ? TEAMWORK_FINAL_WAVE_INTERVAL
-        : TEAMWORK_INITIAL_WAVE_INTERVAL;
-      const shouldOfferTeamwork = !wordComplete
+      const teamworkWaveInterval = inFinalPhase ? 2 : 4;
+      const shouldOfferTeamwork = !wordComplete && !teamworkCollected
         && (!lastTeamworkSpawnWave || waveNumber - lastTeamworkSpawnWave >= teamworkWaveInterval);
       if (shouldOfferTeamwork) {
         const firstOffer = lastTeamworkSpawnWave === 0;
