@@ -663,15 +663,17 @@
     const powerAlreadyVisible = slots.some((slot) => slot.classList.contains("has-power"));
     open = availableSlots();
     if (!powerAlreadyVisible && open.length && waveNumber > 1) {
+      const inFinalPhase = elapsed >= (ROUND_SECONDS * 2) / 3;
+      const teamworkWaveInterval = inFinalPhase ? 2 : 4;
       const shouldOfferTeamwork = !wordComplete && !teamworkCollected
-        && (!lastTeamworkSpawnWave || waveNumber - lastTeamworkSpawnWave >= 4);
+        && (!lastTeamworkSpawnWave || waveNumber - lastTeamworkSpawnWave >= teamworkWaveInterval);
       if (shouldOfferTeamwork) {
         const firstOffer = lastTeamworkSpawnWave === 0;
         lastTeamworkSpawnWave = waveNumber;
         showPower(open[random(open.length)], "teamwork", 3800);
         if (firstOffer) showBanner("同仁一起討論出現了！收下可加分、補名句字母並增加時間。", "time", 3200);
       } else if ((teamworkCollected || wordComplete) && Math.random() < POWER_ITEM_CHANCE) {
-        const eligiblePowerKinds = ["double", "slowSpawn", "timeBonus", "timeBonus"];
+        const eligiblePowerKinds = ["double", "slowSpawn", "slowSpawn", "slowSpawn", "timeBonus", "timeBonus"];
         showPower(open[random(open.length)], eligiblePowerKinds[random(eligiblePowerKinds.length)]);
       }
     }
