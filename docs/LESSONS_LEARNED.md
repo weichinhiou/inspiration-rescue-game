@@ -57,3 +57,8 @@ GitHub Pages 首次開啟時，開始畫面的圖例、背景與遊戲道具圖�
 - 使用者新增 assets/槌子_預設.png 與 assets/槌子_打下去.png。
 - 轉成 idea-mallet-ready-fast.webp 與 idea-mallet-strike-fast.webp 後，分別套用到待擊與按下擊打狀態。
 - 原始 PNG 保留；線上介面使用 fast.webp 版本。
+
+## 2026-09-28：更新 OG 圖與暫停任意門回連
+
+- OG 分享圖改用 assets/og-image.jpg（1200 × 630），index.html 的 Open Graph 與 Twitter 分享圖都指向 GitHub Pages 的絕對網址。
+- 頁面底部任意門超連結已暫時移除；預計 2026 年 10 月底再評估是否恢復，屆時需一併確認網址與按鈕素材。
