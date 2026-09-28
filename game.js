@@ -671,7 +671,7 @@
         showPower(open[random(open.length)], "teamwork", 3800);
         if (firstOffer) showBanner("同仁一起討論出現了！收下可加分、補名句字母並增加時間。", "time", 3200);
       } else if ((teamworkCollected || wordComplete) && Math.random() < POWER_ITEM_CHANCE) {
-        const eligiblePowerKinds = ["double", "slowSpawn", "timeBonus"];
+        const eligiblePowerKinds = ["double", "slowSpawn", "timeBonus", "timeBonus"];
         showPower(open[random(open.length)], eligiblePowerKinds[random(eligiblePowerKinds.length)]);
       }
     }
