@@ -149,7 +149,6 @@
   const comboEl = document.querySelector("#combo");
   const powerStatusEl = document.querySelector("#power-status");
   const savedCountEl = document.querySelector("#saved-count");
-  const roundStateEl = document.querySelector("#round-state");
   const startButton = document.querySelector("#start-button");
   const eventBanner = document.querySelector("#event-banner");
   const eventText = document.querySelector("#event-text");
@@ -529,7 +528,6 @@
     savedCountEl.textContent = "0";
     updatePowerStatus();
     updateWordProgress();
-    roundStateEl.textContent = "準備開始";
     startButton.textContent = "開始搶救";
     startButton.disabled = false;
     eventBanner.className = "event-banner idle";
@@ -566,7 +564,6 @@
     pauseMode = false;
     setRulesMode(false);
     rulesBackdrop.hidden = false;
-    roundStateEl.textContent = "遊戲說明";
     startButton.textContent = "請先看圖例";
     startButton.disabled = true;
     rulesDialog.focus();
@@ -580,7 +577,6 @@
     if (!rulesActive) return;
     rulesActive = false;
     rulesBackdrop.hidden = true;
-    roundStateEl.textContent = "準備開始";
     startButton.textContent = "開始搶救";
     startButton.disabled = false;
     startButton.focus();
@@ -650,7 +646,6 @@
     let count = 3;
     countdownNumber.textContent = String(count);
     countdownOverlay.hidden = false;
-    roundStateEl.textContent = "準備中";
     startButton.textContent = "準備中…";
     startButton.disabled = true;
 
@@ -675,7 +670,6 @@
     running = true;
     pauseButton.hidden = false;
     pauseButton.disabled = false;
-    roundStateEl.textContent = "搶救中";
     startButton.textContent = "搶救中…";
     startButton.disabled = true;
     spawnWave();
@@ -1111,7 +1105,6 @@
     clearTimers();
     remaining = 0;
     timerEl.textContent = timeString(remaining);
-    roundStateEl.textContent = "本局完成";
     startButton.disabled = false;
     startButton.textContent = "再玩一次";
     pauseButton.hidden = true;

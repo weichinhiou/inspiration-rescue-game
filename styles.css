@@ -48,7 +48,6 @@ h1 { margin: 0; font-size: clamp(24px, 3.6vw, 30px); letter-spacing: .035em; lin
 .board-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 11px; }
 .board-heading h2 { margin: 0; font-size: 17px; }
 .board-heading p { margin: 3px 0 0; color: var(--muted); font-size: 12px; }
-.round-badge { padding: 6px 10px; border: 1px solid #e4ddd0; border-radius: 999px; color: #7c786e; background: #faf7ef; font-size: 10px; white-space: nowrap; }
 .interruptions { display: flex; align-items: center; gap: 9px; min-height: 37px; margin-bottom: 9px; }
 .interruptions-label { flex: 0 0 auto; color: #918878; font-size: 10px; font-weight: 700; }
 .event-banner { display: flex; align-items: center; gap: 8px; min-height: 34px; padding: 5px 9px; border: 1px solid #e7e1d7; border-radius: 10px; background: #f8f5ee; color: #77766f; font-size: 10px; transition: background .25s ease, border-color .25s ease, transform .25s ease; }
@@ -156,7 +155,6 @@ h1 { margin: 0; font-size: clamp(24px, 3.6vw, 30px); letter-spacing: .035em; lin
   .board-heading { margin-bottom: 8px; }
   .board-heading h2 { font-size: 15px; }
   .board-heading p { font-size: 9px; }
-  .round-badge { padding: 5px 8px; font-size: 9px; }
   .interruptions { gap: 0; min-height: 31px; margin-bottom: 7px; }
   .interruptions-label { display: none; }
   .event-banner { width: 100%; min-height: 31px; font-size: 9px; }
@@ -229,7 +227,6 @@ h1 { color: #fff8e9; text-shadow: 0 2px 10px #07191877; }
 .board-heading { margin: 0 0 6px; padding: 0 10px; color: #fff7e5; }
 .board-heading h2 { color: #fff7e5; font-size: 19px; text-shadow: 0 2px 6px #102a28; }
 .board-heading p { color: #e7eee0; text-shadow: 0 1px 5px #102a28; }
-.round-badge { border: 1px solid #f8e4ba88; background: #163d3bd9; color: #f8eacb; box-shadow: 0 3px 12px #102b2a66; }
 .interruptions { min-height: 33px; margin: 0 8px 8px; }
 .interruptions-label { color: #f0ddb7; text-shadow: 0 1px 5px #102a28; }
 .event-banner { min-height: 31px; border-color: #e9d2a477; background: #faf0d8e8; color: #385b50; box-shadow: 0 4px 12px #102b2a55; }
@@ -333,7 +330,6 @@ h1 { color: #fff8e9; text-shadow: 0 2px 10px #07191877; }
   .board-heading { padding-inline: 5px; }
   .board-heading h2 { font-size: 15px; }
   .board-heading p { font-size: 9px; }
-  .round-badge { padding: 4px 7px; font-size: 8px; }
   .interruptions { margin: 0 3px 6px; }
   .interruptions-label { display: none; }
   .event-banner { width: 100%; min-height: 29px; padding: 4px 7px; font-size: 8px; }
@@ -420,7 +416,6 @@ h1 { color: #412f1e; text-shadow: 0 1px #fff5e0a6; }
   text-shadow: 0 1px 3px #fff5dfc9;
 }
 .board-heading h2 { font-size: 19px; }
-.round-badge { border: 1px solid #fff9e1b3; background: #fbf1dfcc; color: #614521; box-shadow: 0 3px 10px #593d202b; }
 .event-banner { background: #fff8e9e8; color: #365744; }
 .event-banner.active { background: #fff0e9ed; color: #873f34; }
 .grid-wrap {
@@ -797,7 +792,6 @@ h1 { font-size: clamp(28px, 3.8vw, 34px); }
 .hud-label { font-size: 14px; }
 .hud-card strong { font-size: 28px; }
 .power-status { font-size: 12px; }
-.round-badge { padding: 7px 12px; font-size: 14px; }
 .event-banner { min-height: 38px; padding: 7px 11px; font-size: 14px; }
 .event-icon { min-width: 44px; height: 29px; font-size: 11px; }
 .slot-id { font-size: 12px; }
@@ -911,7 +905,6 @@ h1 { font-size: clamp(28px, 3.8vw, 34px); }
   .subtitle { font-size: 13px; }
   .hud-label { font-size: 12px; }
   .hud-card strong { font-size: 22px; }
-  .round-badge { font-size: 13px; }
   .event-banner { min-height: 36px; font-size: 13px; }
   .event-icon { min-width: 38px; height: 27px; font-size: 10px; }
   .slot-id { font-size: 11px; }
