@@ -490,7 +490,14 @@ h1 { color: #412f1e; text-shadow: 0 1px #fff5e0a6; }
 .quote-reveal blockquote { margin: 7px 0 9px; color: #3e4f3b; font-family: Georgia,serif; font-size: 12px; font-weight: 700; line-height: 1.45; }
 .quote-meaning-label { margin: 0 0 3px; color: #987345; font-size: 9px; font-weight: 900; letter-spacing: .06em; }
 .quote-meaning { margin: 0; color: #5e513f; font-size: 10px; line-height: 1.55; }
+
+.quote-history { display: grid; gap: 10px; margin: 0 0 12px; }
+.quote-history-item { padding: 12px 14px; border: 1px solid #d6a86666; border-radius: 14px; background: #fff5dfb8; color: #4a3326; }
+.quote-history-kicker { color: #9a5e2d; font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.quote-history-item blockquote { margin: 5px 0; font-family: Georgia, serif; font-size: clamp(15px, 2vw, 18px); line-height: 1.4; }
+.quote-history-item p { margin: 5px 0 0; color: #76503b; font-size: 13px; line-height: 1.5; }
 .quote-card:has(.quote-reveal:not([hidden])) .word-slots,
+
 .quote-card:has(.quote-reveal:not([hidden])) .quote-progress { opacity: .68; }
 .footer { color: #614a2f; }
 .toast { box-shadow: 0 5px 14px #56391f42; }

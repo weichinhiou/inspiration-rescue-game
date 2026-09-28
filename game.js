@@ -154,6 +154,7 @@
   const notebook = document.querySelector("#notebook");
   const notebookPaper = document.querySelector("#notebook-paper");
   const wordSlotsEl = document.querySelector("#word-slots");
+  const quoteHistoryEl = document.querySelector("#quote-history");
   const wordBonusEl = document.querySelector("#word-bonus");
   const wordHintEl = document.querySelector("#word-hint");
   const quoteAuthorEl = document.querySelector("#quote-author");
@@ -179,6 +180,7 @@
   let captured = 0;
   let currentQuote = quotes[0];
   let wordComplete = false;
+  let completedQuotes = [];
   let quoteRewardClaimed = false;
   let doubleNextScore = false;
   let slowSpawnUntil = 0;
@@ -253,8 +255,18 @@
         { frequency: 880, at: delay + 0.065, duration: 0.105, volume: 0.035 }
       ],
       wrong: [
-        { frequency: 235, endFrequency: 165, at: delay, duration: 0.13, type: "triangle", volume: 0.05 },
-        { frequency: 155, endFrequency: 125, at: delay + 0.075, duration: 0.13, type: "sine", volume: 0.035 }
+        { frequency: 235, endFrequency: 165, at: delay, duration: 0.13, type: "triangle", volume: 0.075 },
+        { frequency: 155, endFrequency: 125, at: delay + 0.075, duration: 0.13, type: "sine", volume: 0.055 }
+      ],
+      rareCorrect: [
+        { frequency: 880, at: delay, duration: 0.08, type: "sine", volume: 0.045 },
+        { frequency: 1175, at: delay + 0.07, duration: 0.1, type: "sine", volume: 0.045 },
+        { frequency: 1568, at: delay + 0.15, duration: 0.16, type: "sine", volume: 0.04 }
+      ],
+      teamwork: [
+        { frequency: 440, at: delay, duration: 0.12, type: "triangle", volume: 0.045 },
+        { frequency: 660, at: delay + 0.08, duration: 0.14, type: "triangle", volume: 0.045 },
+        { frequency: 880, at: delay + 0.17, duration: 0.2, type: "triangle", volume: 0.04 }
       ],
       double: [
         { frequency: 740, at: delay, duration: 0.12, type: "sine", volume: 0.035 },
@@ -387,6 +399,29 @@
     powerStatusEl.hidden = !doubleNextScore;
   }
 
+  function renderQuoteHistory() {
+    quoteHistoryEl.replaceChildren();
+    completedQuotes.forEach((quote, index) => {
+      const card = document.createElement("article");
+      card.className = "quote-history-item";
+      card.innerHTML = `<div class="quote-history-kicker">✦ 第 ${index + 1} 句已完成</div><blockquote>“${quote.text}”</blockquote><p>${quote.explanation}</p>`;
+      quoteHistoryEl.append(card);
+    });
+  }
+
+  function advanceToNextQuote() {
+    if (!wordComplete) return;
+    completedQuotes.push(currentQuote);
+    const availableQuotes = quotes.filter((quote) => !completedQuotes.includes(quote));
+    currentQuote = availableQuotes.length ? availableQuotes[random(availableQuotes.length)] : quotes[random(quotes.length)];
+    collectedLetters.clear();
+    wordComplete = false;
+    quoteRewardClaimed = false;
+    renderQuoteHistory();
+    updateWordProgress();
+    showBanner(`第 ${completedQuotes.length + 1} 句名句拼圖開始！`, "time", 2200);
+  }
+
   function updateWordProgress() {
     wordSlotsEl.replaceChildren();
     const foundSoFar = new Map();
@@ -472,6 +507,7 @@
     score = 0;
     combo = 0;
     captured = 0;
+    completedQuotes = [];
     currentQuote = quotes[random(quotes.length)];
     wordComplete = false;
     quoteRewardClaimed = false;
@@ -498,6 +534,7 @@
     eventBanner.querySelector(".event-icon").textContent = "規則";
     eventText.textContent = "靈感 +1／罕見 +3；筆記本 +5 秒；同仁討論 +3 分、補字母並加 3 秒；臨床急件誤點 −5 秒。";
     renderNotebook();
+    renderQuoteHistory();
     setIdleGrid();
   }
 
@@ -707,7 +744,10 @@
     waveNumber += 1;
     let open = availableSlots();
     let liveIdeas = slots.filter((slot) => slot.classList.contains("has-idea")).length;
-    let ideasToSpawn = Math.min(2, MAX_IDEAS_ON_BOARD - liveIdeas, open.length);
+    const elapsed = ROUND_SECONDS - remaining;
+    const openingPhase = elapsed < 5;
+    const ideaLimit = openingPhase ? 1 : 2;
+    let ideasToSpawn = Math.min(ideaLimit, MAX_IDEAS_ON_BOARD - liveIdeas, open.length);
     while (ideasToSpawn > 0) {
       open = availableSlots();
       if (!open.length) break;
@@ -718,8 +758,7 @@
 
     open = availableSlots();
     const liveWrong = slots.filter((slot) => slot.classList.contains("has-wrong")).length;
-    const elapsed = ROUND_SECONDS - remaining;
-    const wrongToSpawn = elapsed >= (ROUND_SECONDS * 2) / 3 ? 3 : 2;
+    const wrongToSpawn = openingPhase ? 1 : elapsed >= (ROUND_SECONDS * 2) / 3 ? 3 : 2;
     const distractionsToSpawn = Math.min(wrongToSpawn, MAX_WRONG_ON_BOARD - liveWrong, open.length);
     for (let i = 0; i < distractionsToSpawn; i += 1) {
       open = availableSlots();
@@ -829,7 +868,7 @@
     const catchPoints = ((rare ? 3 : 1) + comboBonus) * multiplier;
     const quotePoints = extraQuoteBonus * multiplier;
     const gained = catchPoints + quotePoints;
-    playGameSound("correct");
+    playGameSound(rare ? "rareCorrect" : "correct");
     if (multiplier === 2) playGameSound("double", 0.09);
     score += gained;
     doubleNextScore = false;
@@ -847,6 +886,7 @@
     if (extraQuoteBonus) messages.push(`新靈感解讀：${currentQuote.explanation}`);
     if (multiplier === 2) messages.push("已套用 ×2");
     showToast(messages.join("・"), extraQuoteBonus ? 6500 : 1500);
+    if (wordComplete) advanceToNextQuote();
   }
 
   function collectQuoteLetter(letter) {
@@ -912,11 +952,12 @@
       timerEl.textContent = timeString(remaining);
       updatePowerStatus();
       showTimeFloater(rect, `+${gained} 分・+${TEAMWORK_BONUS_SECONDS}s`, "teamwork-floater");
-      playGameSound("correct");
+      playGameSound("teamwork");
       if (multiplier === 2) playGameSound("double", 0.09);
       const letterLabel = letter ? `補上缺少字母 ${letter}` : "名句字母已集齊";
       showToast(`同仁一起討論：+${TEAMWORK_BONUS_POINTS} 分、${letterLabel}、+${TEAMWORK_BONUS_SECONDS} 秒${multiplier === 2 ? "（×2 已套用）" : ""}`, extraQuoteBonus ? 6000 : 2600);
       showBanner(`同仁一起討論：+${TEAMWORK_BONUS_POINTS} 分、${letterLabel}、+${TEAMWORK_BONUS_SECONDS} 秒。`, "time", 2600);
+      if (wordComplete) advanceToNextQuote();
       return;
     }
     if (kind === "slowSpawn") {
