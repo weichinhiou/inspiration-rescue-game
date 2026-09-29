@@ -1,17 +1,24 @@
 (() => {
   const ROUND_SECONDS = 60;
-  const RARE_IDEA_CHANCE = 0.07;
+  const RARE_IDEA_CHANCE = 0.18;
   const POWER_ITEM_CHANCE = 0.2;
   const BONUS_SECONDS_PER_PICKUP = 5;
   const TEAMWORK_BONUS_POINTS = 3;
   const TEAMWORK_BONUS_SECONDS = 3;
-  const TEAMWORK_INITIAL_WAVE_INTERVAL = 4;
-  const TEAMWORK_FINAL_WAVE_INTERVAL = 3;
+  const TEAMWORK_INITIAL_WAVE_INTERVAL = 7;
+  const TEAMWORK_FINAL_WAVE_INTERVAL = 6;
   const TIME_TRAP_PENALTY = 5;
   const SLOW_SPAWN_DURATION_MS = 3000;
   const SLOW_SPAWN_FACTOR = 1.7;
   const MAX_IDEAS_ON_BOARD = 4;
   const MAX_WRONG_ON_BOARD = 3;
+  const MAX_ACTIVE_OBJECTS = 6;
+  const WAVE_SURGE_INTERVAL = 6;
+  const NORMAL_WAVE_RHYTHMS = [
+    { ideas: 1, wrong: 1 },
+    { ideas: 2, wrong: 1 },
+    { ideas: 1, wrong: 2 }
+  ];
   const NOTEBOOK_CATEGORIES = 5;
   const ideas = ["新點子！", "研究候診？", "教學回饋", "資料有線索", "想追這題"];
   const distractions = [
@@ -769,6 +776,10 @@
     return slots.filter((slot) => !slot.classList.contains("has-idea") && !slot.classList.contains("has-wrong") && !slot.classList.contains("has-power"));
   }
 
+  function activeObjectCount() {
+    return slots.filter((slot) => slot.classList.contains("has-idea") || slot.classList.contains("has-wrong") || slot.classList.contains("has-power")).length;
+  }
+
   function waveDelay() {
     const elapsed = ROUND_SECONDS - remaining;
     const base = elapsed < ROUND_SECONDS / 3 ? 900 : elapsed < (ROUND_SECONDS * 2) / 3 ? 700 : 520;
@@ -826,8 +837,14 @@
     let liveIdeas = slots.filter((slot) => slot.classList.contains("has-idea")).length;
     const elapsed = ROUND_SECONDS - remaining;
     const openingPhase = elapsed < 5;
-    const ideaLimit = openingPhase ? 1 : 2;
-    let ideasToSpawn = Math.min(ideaLimit, MAX_IDEAS_ON_BOARD - liveIdeas, open.length);
+    const isSurgeWave = !openingPhase && waveNumber % WAVE_SURGE_INTERVAL === 0;
+    const rhythm = openingPhase
+      ? { ideas: 1, wrong: 1 }
+      : isSurgeWave
+        ? { ideas: 2, wrong: 3 }
+        : NORMAL_WAVE_RHYTHMS[random(NORMAL_WAVE_RHYTHMS.length)];
+    const capacity = () => Math.max(0, MAX_ACTIVE_OBJECTS - activeObjectCount());
+    let ideasToSpawn = Math.min(rhythm.ideas, MAX_IDEAS_ON_BOARD - liveIdeas, open.length, capacity());
     while (ideasToSpawn > 0) {
       open = availableSlots();
       if (!open.length) break;
@@ -838,8 +855,8 @@
 
     open = availableSlots();
     const liveWrong = slots.filter((slot) => slot.classList.contains("has-wrong")).length;
-    const wrongToSpawn = openingPhase ? 1 : elapsed >= (ROUND_SECONDS * 2) / 3 ? 3 : 2;
-    const distractionsToSpawn = Math.min(wrongToSpawn, MAX_WRONG_ON_BOARD - liveWrong, open.length);
+    const wrongToSpawn = rhythm.wrong;
+    const distractionsToSpawn = Math.min(wrongToSpawn, MAX_WRONG_ON_BOARD - liveWrong, open.length, capacity());
     for (let i = 0; i < distractionsToSpawn; i += 1) {
       open = availableSlots();
       if (!open.length) break;
@@ -851,7 +868,7 @@
 
     const powerAlreadyVisible = slots.some((slot) => slot.classList.contains("has-power"));
     open = availableSlots();
-    if (!powerAlreadyVisible && open.length && waveNumber > 1) {
+    if (!powerAlreadyVisible && open.length && capacity() > 0 && waveNumber > 1) {
       const inFinalPhase = elapsed >= (ROUND_SECONDS * 2) / 3;
       const teamworkWaveInterval = inFinalPhase
         ? TEAMWORK_FINAL_WAVE_INTERVAL
@@ -864,7 +881,7 @@
         showPower(open[random(open.length)], "teamwork", 3800);
         if (firstOffer) showBanner("同仁一起討論出現了！收下可加分、補名句字母並增加時間。", "time", 3200);
       } else if (Math.random() < POWER_ITEM_CHANCE) {
-        const eligiblePowerKinds = ["double", "timeBonus", "slowSpawn"];
+        const eligiblePowerKinds = ["double", "double", "slowSpawn", "slowSpawn", "timeBonus"];
         showPower(open[random(open.length)], eligiblePowerKinds[random(eligiblePowerKinds.length)]);
       }
     }
