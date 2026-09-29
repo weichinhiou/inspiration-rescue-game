@@ -75,3 +75,69 @@ GitHub Pages 首次開啟時，開始畫面的圖例、背景與遊戲道具圖�
 ## 2026-09-29：HUD 狀態卡片文字置中
 
 - 將剩餘時間、搶救到的靈感、連續接住三張 HUD 卡片的標題與數字統一水平置中，並保留手機版響應式尺寸。
+## 2026-09-29：圖片載入效能實測與 fast → hi-res 分層載入
+
+### 量測範圍與基線
+
+本次以 GitHub Pages 線上網址 `https://weichinhiou.github.io/inspiration-rescue-game/` 實測，並以目前工作區 `index.html`、`styles.css`、`game.js` 與 `assets/` 做引用盤點。量測不包含既有未追蹤且未被程式引用的素材：`QR.png`、`QR2.png`、`circle.png`、`inspiration-rescue-square-rounded.png`、`squre.png`；這些檔案保留在工作區，沒有納入本次修改。
+
+瀏覽器候選資源為 14 個 fast／favicon 圖片，合計 2,564,498 bytes（約 2.45 MiB）；另有社群分享圖 `og-image.jpg` 261,481 bytes，加入線上 HTTP 量測後總量為 2,825,979 bytes（約 2.70 MiB）。所有引用圖片均保留原始高畫質檔案，fast 檔案維持原始像素尺寸，只降低編碼容量。
+
+| 引用資源 | 格式／尺寸 | 本機 bytes | hi-res／原始資源 |
+|---|---:|---:|---|
+| `double-score-powerup-fast.webp` | WebP／1230×1278 | 271,936 | `double-score-powerup.webp`／328,622 |
+| `idea-mallet-ready-fast.webp` | WebP／1254×1254 | 105,722 | `槌子_預設.png`／974,874 |
+| `idea-mallet-strike-fast.webp` | WebP／1437×1094 | 143,430 | `槌子_打下去.png`／1,046,269 |
+| `idea-mascot-fast.webp` | WebP／1246×1262 | 159,714 | `idea-mascot.webp`／205,766 |
+| `rare-inspiration-fast.webp` | WebP／1312×1199 | 171,798 | `rare-inspiration.png`／1,284,729 |
+| `red-distraction-fast.webp` | WebP／1305×1206 | 199,126 | `red-distraction.webp`／246,990 |
+| `slow-spawn-pocketwatch-fast.webp` | WebP／1243×1266 | 262,530 | `slow-spawn-pocketwatch.png`／1,598,789 |
+| `teamwork-idea-powerup-fast.webp` | WebP／1254×1254 | 221,100 | `teamwork-idea-powerup.png`／1,660,833 |
+| `time-bonus-notebook-fast.webp` | WebP／1312×1199 | 183,758 | `time-bonus-notebook.png`／1,662,931 |
+| `time-penalty-timer-fast.webp` | WebP／1300×1210 | 191,692 | `time-penalty-timer.png`／1,556,234 |
+| `game-desk-background-fast.webp` | WebP／1672×941 | 211,734 | `game-desk-background.webp`／345,790 |
+| `game-desk-background-mobile-fast.webp` | WebP／941×1672 | 210,402 | `game-desk-background-mobile.webp`／364,510 |
+| `favicon-512.png` | PNG／512×512 | 224,223 | — |
+| `favicon.ico` | ICO／48×48 | 7,333 | — |
+| `og-image.jpg` | JPEG／1200×630 | 261,481 | 社群分享圖，不是遊戲首屏資源 |
+
+### 線上 HTTP 實測
+
+測量方式是對每個資源執行完整 GET，計算從 request 開始到 response body 讀完的 wall time；數值會受 GitHub Pages CDN、當時網路與序列／並行順序影響，不能視為真實手機固定秒數。
+
+- fast／favicon 圖片抽測均為 HTTP 200；下載 bytes 與本機檔案一致。
+- 回應 `Cache-Control: max-age=600`，且每個資源都有 ETag；例如桌機背景為 `"6abb9e42-33b16"`。
+- 條件式 GET 實測：桌機背景帶 `If-None-Match` 回 HTTP 304，約 210 ms。
+- 15 個資源合計約 2.70 MiB：序列完整下載約 11,883 ms；並行完整下載約 3,807 ms。並行較快但仍有明顯等待，表示多張圖片同時競爭頻寬是重要因素。
+- 目前沒有 Canvas 圖片繪製或圖片 atlas 路徑；遊戲物件是 HTML `<img>` 動態插入，因此沒有建立 `items-atlas-fast.webp`。本次沒有直接量到瀏覽器 decode／paint 的獨立耗時，不能宣稱解碼是主瓶頸。
+
+### 採用方案
+
+1. 首屏品牌圖與 CSS 背景先使用既有 `*-fast.webp`；fast 與 hi-res 維持相同像素尺寸。
+2. fast 圖片載入後，以 `requestIdleCallback`（不支援時退回 timeout）低優先預載原始 hi-res，完成後自動替換；同一來源使用 Promise cache 避免重複下載。
+3. 槌子與規則圖例改成 `data-src`，只在按下開始或進入該流程時 hydration；它們不再於初始 HTML 解析時搶首屏頻寬。
+4. 靈感、干擾物與特殊道具在實際生成時先顯示 fast，背景與動態圖片也在閒置時段升級 hi-res。
+5. 桌機／橫向使用橫式 fast 背景，直式手機只套用直式 fast 背景；CSS 不再先載入桌機背景再覆寫手機背景。背景 hi-res 只依目前 media 狀態選一張載入。
+6. 圖片載入失敗時移除失敗的 `src`，保留 CSS 漸層 fallback，避免出現白屏或破圖圖示。
+7. 更新 `styles.css?v=7.4.15` 與 `game.js?v=7.4.15`，避免舊版快取遮蔽修正。
+
+### 取捨、限制與回退方式
+
+- hi-res 仍會在瀏覽器閒置後下載，因此完整遊戲使用一段時間後的總流量不會等於只下載 fast；換取的是首屏先可互動與後續畫質恢復。
+- 使用者若只開啟頁面但未開始遊戲，槌子與規則圖例的 fast／hi-res 都不會請求；這降低首屏競爭，但第一次開啟規則時可能多一個 hydration 瞬間。
+- CSS fallback 是漸層，不是 Canvas；目前沒有 Canvas 圖像路徑，故不引入額外 atlas 複雜度。
+- 若 hi-res 載入失敗，畫面保留 fast；若 fast 本身失敗，顯示 CSS 漸層 fallback。要回退整批方案，可從 checkpoint tag `checkpoint/image-perf-before-20260929` 還原本次效能修改前的版本。
+
+### 驗證結果
+
+- [x] `node --check game.js`
+- [x] fast／hi-res 圖片路徑存在
+- [x] 圖片尺寸、格式與容量盤點完成
+- [x] `git diff --check` 無 whitespace error；僅有 Git 的 LF→CRLF 提示
+- [x] 線上 fast 圖片 HTTP 200（已分批完成所有 fast 資源確認）
+- [x] 線上 Cache-Control、ETag、完整下載時間與條件式 304 已量測
+- [ ] 真實手機實機尚未驗證
+- [ ] iOS Safari 尚未驗證
+- [ ] 冷快取尚未以真實手機驗證
+- [ ] 慢速網路尚未以真實手機驗證
+- [ ] 瀏覽器 decode／paint、實際首屏 LCP 與真實 waterfall 尚未以 DevTools 或手機實機驗證；本機沒有 Playwright／Puppeteer／可用 headless Chrome

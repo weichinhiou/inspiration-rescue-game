@@ -217,6 +217,88 @@
   const quoteLetters = () => [...currentQuote.text.toUpperCase()].filter((char) => /[A-Z]/.test(char));
   const quoteReward = () => quoteLetters().length * 3;
   const countCollectedLetters = () => [...collectedLetters.values()].reduce((sum, count) => sum + count, 0);
+  const imageLoadPromises = new Map();
+
+  function bindImageFallback(image) {
+    if (!image || image.dataset.fallbackBound === "true") return;
+    image.dataset.fallbackBound = "true";
+    image.addEventListener("error", () => {
+      image.dataset.imageError = "true";
+      image.removeAttribute("src");
+      image.classList.add("image-fallback");
+    }, { once: true });
+  }
+
+  function scheduleLowPriority(callback) {
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(callback, { timeout: 2500 });
+    } else {
+      window.setTimeout(callback, 800);
+    }
+  }
+
+  function queueHighResImage(image) {
+    const source = image?.dataset.hires;
+    if (!source || image.dataset.hiresQueued === "true") return;
+    image.dataset.hiresQueued = "true";
+    let loadPromise = imageLoadPromises.get(source);
+    if (!loadPromise) {
+      loadPromise = new Promise((resolve, reject) => {
+        const preload = new window.Image();
+        preload.decoding = "async";
+        preload.fetchPriority = "low";
+        preload.onload = () => resolve(source);
+        preload.onerror = reject;
+        preload.src = source;
+      });
+      imageLoadPromises.set(source, loadPromise);
+    }
+    loadPromise.then(() => {
+      if (!image.isConnected || image.dataset.imageError === "true") return;
+      image.src = source;
+      image.dataset.imageQuality = "high";
+    }).catch(() => {});
+  }
+
+  function scheduleHighResImages(root = document) {
+    const run = () => {
+      root.querySelectorAll("img[data-hires][src]").forEach((image) => {
+        bindImageFallback(image);
+        queueHighResImage(image);
+      });
+    };
+    scheduleLowPriority(run);
+  }
+
+  function hydrateDeferredImages(root) {
+    root.querySelectorAll("img[data-src]").forEach((image) => {
+      image.src = image.dataset.src;
+      image.removeAttribute("data-src");
+      bindImageFallback(image);
+    });
+    scheduleHighResImages(root);
+  }
+
+  function prepareSlotImage(slot) {
+    bindImageFallback(slot.querySelector("img"));
+    scheduleHighResImages(slot);
+  }
+
+  function queueBackgroundUpgrade() {
+    scheduleLowPriority(() => {
+      const isPortraitMobile = window.matchMedia("(max-width: 600px) and (orientation: portrait)").matches;
+      const source = isPortraitMobile
+        ? "./assets/game-desk-background-mobile.webp"
+        : "./assets/game-desk-background.webp";
+      const preload = new window.Image();
+      preload.decoding = "async";
+      preload.fetchPriority = "low";
+      preload.onload = () => {
+        document.body.style.backgroundImage = `url("${source}")`;
+      };
+      preload.src = source;
+    });
+  }
 
   function unlockAudio() {
     if (!soundEnabled) return null;
@@ -561,6 +643,7 @@
     resultBackdrop.hidden = true;
     resetState();
     rulesActive = true;
+    hydrateDeferredImages(rulesBackdrop);
     pauseMode = false;
     setRulesMode(false);
     rulesBackdrop.hidden = false;
@@ -667,6 +750,7 @@
   }
 
   function beginRound() {
+    hydrateDeferredImages(gameMalletEl);
     running = true;
     pauseButton.hidden = false;
     pauseButton.disabled = false;
@@ -795,8 +879,10 @@
     slot.dataset.rare = String(rare);
     slot.setAttribute("aria-label", `${rare ? "罕見靈感 +3 分" : "靈感 +1 分"}：${label}，字母 ${letter}`);
     const art = rare ? "rare-inspiration-fast.webp" : "idea-mascot-fast.webp";
+    const hiresArt = rare ? "rare-inspiration.png" : "idea-mascot.webp";
     const rareBadge = rare ? '<span class="rare-mark" aria-hidden="true">★ +3</span>' : "";
-    slot.innerHTML = `<span class="slot-id">${String(index).padStart(2, "0")}</span><span class="letter-badge">${letter}</span>${rareBadge}<span class="idea-content"><img class="object-art idea-art" src="./assets/${art}" alt="" /><span class="idea-label">${label}</span></span>`;
+    slot.innerHTML = `<span class="slot-id">${String(index).padStart(2, "0")}</span><span class="letter-badge">${letter}</span>${rareBadge}<span class="idea-content"><img class="object-art idea-art" src="./assets/${art}" data-hires="./assets/${hiresArt}" alt="" /><span class="idea-label">${label}</span></span>`;
+    prepareSlotImage(slot);
     scheduleSlotExpiry(slot, lifetime, () => {
       if (slot.classList.contains("has-idea")) {
         clearSlot(slot);
@@ -815,9 +901,11 @@
     const isTimeTrap = distraction.kind === "time-trap";
     slot.setAttribute("aria-label", isTimeTrap ? `紅色干擾物：${distraction.label}，誤點減少 5 秒` : `紅標干擾物：${distraction.label}，誤點扣兩分`);
     const art = isTimeTrap ? "time-penalty-timer-fast.webp" : "red-distraction-fast.webp";
+    const hiresArt = isTimeTrap ? "time-penalty-timer.png" : "red-distraction.webp";
     const mark = isTimeTrap ? "−5s" : "−2";
     const label = distraction.label;
-    slot.innerHTML = `<span class="slot-id">${String(index).padStart(2, "0")}</span><span class="wrong-mark">${mark}</span><span class="block-content"><img class="object-art distraction-art" src="./assets/${art}" alt="" /><span class="block-label">${label}</span></span>`;
+    slot.innerHTML = `<span class="slot-id">${String(index).padStart(2, "0")}</span><span class="wrong-mark">${mark}</span><span class="block-content"><img class="object-art distraction-art" src="./assets/${art}" data-hires="./assets/${hiresArt}" alt="" /><span class="block-label">${label}</span></span>`;
+    prepareSlotImage(slot);
     scheduleSlotExpiry(slot, lifetime, () => {
       if (slot.classList.contains("has-wrong")) clearSlot(slot);
     });
@@ -830,7 +918,9 @@
     slot.disabled = false;
     slot.dataset.power = kind;
     slot.setAttribute("aria-label", item.aria);
-    slot.innerHTML = `<span class="slot-id">${String(index).padStart(2, "0")}</span><span class="power-content power-${kind}"><img class="object-art power-art" src="./assets/${item.art}" alt="" /><span class="power-label">${item.label}</span></span>`;
+    const hiresArt = { double: "double-score-powerup.webp", timeBonus: "time-bonus-notebook.png", slowSpawn: "slow-spawn-pocketwatch.png", teamwork: "teamwork-idea-powerup.png" }[kind];
+    slot.innerHTML = `<span class="slot-id">${String(index).padStart(2, "0")}</span><span class="power-content power-${kind}"><img class="object-art power-art" src="./assets/${item.art}" data-hires="./assets/${hiresArt}" alt="" /><span class="power-label">${item.label}</span></span>`;
+    prepareSlotImage(slot);
     scheduleSlotExpiry(slot, lifetime, () => {
       if (slot.classList.contains("has-power")) clearSlot(slot);
     });
@@ -1172,6 +1262,9 @@
     if (event.key === "Escape" && !resultBackdrop.hidden && !closeResultButton.disabled) resultBackdrop.hidden = true;
   });
 
+  document.querySelectorAll("img[src]").forEach(bindImageFallback);
+  scheduleHighResImages(document);
+  queueBackgroundUpgrade();
   resetState();
   updateSoundToggle();
 })();

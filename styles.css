@@ -202,7 +202,7 @@ h1 { margin: 0; font-size: clamp(24px, 3.6vw, 30px); letter-spacing: .035em; lin
 html { min-height: 100%; }
 body {
   min-height: 100vh;
-  background: #183d3d url("./assets/game-desk-background-fast.webp") center center / cover fixed no-repeat;
+  background: #183d3d center center / cover fixed no-repeat;
   color: #f9f0dd;
 }
 body::before { content: ""; position: fixed; z-index: 0; inset: 0; background: linear-gradient(180deg, #102e2e35, #102e2e12 44%, #102e2e45); pointer-events: none; }
@@ -246,7 +246,8 @@ h1 { color: #fff8e9; text-shadow: 0 2px 10px #07191877; }
 .slot.has-idea:active, .slot.has-wrong:active, .slot.has-power:active { transform: scale(.94); }
 .slot.has-idea::before, .slot.has-wrong::before, .slot.has-power::before { filter: brightness(.88); }
 .idea-content, .block-content, .power-content { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 0; text-align: center; }
-.object-art { display: block; object-fit: contain; pointer-events: none; filter: drop-shadow(0 9px 5px #061c1a72); }
+.object-art { display: block; object-fit: contain; pointer-events: none; background: linear-gradient(135deg,#fff5c8aa,#d9c68a66); border-radius: 22%; filter: drop-shadow(0 9px 5px #061c1a72); }
+.image-fallback { min-height: 72px; background: linear-gradient(135deg,#fff5c8,#b8c9ad); opacity: .82; }
 .idea-art { width: min(88%, 128px); height: min(82%, 116px); position: absolute; left: 50%; top: -7%; transform: translateX(-50%); }
 .idea-label, .block-label, .power-label { position: relative; z-index: 2; max-width: 95%; margin-bottom: 3%; padding: 5px 9px 6px; border: 1px solid #d5b966; border-radius: 5px 7px 4px 6px; background: linear-gradient(135deg,#fff3b8,#e8cb76); color: #504229; font-size: clamp(10px,1.15vw,13px); font-weight: 900; line-height: 1.2; box-shadow: 0 4px 0 #8b633d, 0 7px 8px #071d1b77; transform: rotate(-2deg); }
 .letter-badge { z-index: 3; top: 6%; right: 4%; width: 26px; height: 26px; border: 2px solid #fff4cf; background: #275a4c; color: #fff6d8; font-size: 13px; box-shadow: 0 3px 6px #081d1b8a; }
@@ -508,6 +509,9 @@ h1 { color: #412f1e; text-shadow: 0 1px #fff5e0a6; }
   .grid-wrap { height: 400px; padding-inline: 12px; }
   .side-column { gap: 10px; }
   .quote-reveal blockquote { font-size: 11px; }
+}
+@media (min-width: 601px), (max-width: 600px) and (orientation: landscape) {
+  body { background-image: url("./assets/game-desk-background-fast.webp"); background-position: center center; background-size: cover; background-attachment: fixed; }
 }
 @media (max-width: 600px) and (orientation: portrait) {
   body { background-image: url("./assets/game-desk-background-mobile-fast.webp"); background-position: center top; background-size: cover; background-attachment: fixed; }

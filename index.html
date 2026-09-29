@@ -21,13 +21,13 @@
     <link rel="icon" href="./assets/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="512x512" href="./assets/favicon-512.png" />
     <link rel="apple-touch-icon" sizes="512x512" href="./assets/favicon-512.png" />
-    <title>靈感搶救戰｜v7.4.14</title>
-    <link rel="stylesheet" href="./styles.css?v=7.4.14" />
+    <title>靈感搶救戰｜v7.4.15</title>
+    <link rel="stylesheet" href="./styles.css?v=7.4.15" />
   </head>
   <body>
     <main class="game-shell">
       <header class="topbar">
-        <div class="brand-mark"><img src="./assets/idea-mascot-fast.webp" alt="靈感燈泡" /></div>
+        <div class="brand-mark"><img src="./assets/idea-mascot-fast.webp" data-hires="./assets/idea-mascot.webp" alt="靈感燈泡" decoding="async" /></div>
         <div class="brand-copy">
           <p class="eyebrow">IDEA 儲思盆・靈感快閃任務</p>
           <h1>靈感搶救戰</h1>
@@ -118,8 +118,8 @@
     </main>
 
     <div id="game-mallet" class="game-mallet" aria-hidden="true">
-      <img class="mallet-ready-pose" src="./assets/idea-mallet-ready-fast.webp" alt="" />
-      <img class="mallet-impact-pose" src="./assets/idea-mallet-strike-fast.webp" alt="" />
+      <img class="mallet-ready-pose" data-src="./assets/idea-mallet-ready-fast.webp" data-hires="./assets/槌子_預設.png" alt="" decoding="async" />
+      <img class="mallet-impact-pose" data-src="./assets/idea-mallet-strike-fast.webp" data-hires="./assets/槌子_打下去.png" alt="" decoding="async" />
     </div>
     <div class="toast" id="toast" aria-live="polite"></div>
     <div id="rules-backdrop" class="rules-backdrop" hidden>
@@ -133,35 +133,35 @@
         </div>
         <div class="rules-grid">
           <article class="rule-item">
-            <img src="./assets/idea-mascot-fast.webp" alt="" />
+            <img data-src="./assets/idea-mascot-fast.webp" data-hires="./assets/idea-mascot.webp" alt="" decoding="async" />
             <div><h3>靈感字條</h3><p>點中 +1 分，並收集名句字母。</p></div>
           </article>
           <article class="rule-item">
-            <img src="./assets/rare-inspiration-fast.webp" alt="" />
+            <img data-src="./assets/rare-inspiration-fast.webp" data-hires="./assets/rare-inspiration.png" alt="" decoding="async" />
             <div><h3>星光靈感</h3><p>點中 +3 分，也會收集字母。</p></div>
           </article>
           <article class="rule-item">
-            <img src="./assets/double-score-powerup-fast.webp" alt="" />
+            <img data-src="./assets/double-score-powerup-fast.webp" data-hires="./assets/double-score-powerup.webp" alt="" decoding="async" />
             <div><h3>紫色 ×2 便條</h3><p>下次得分或扣分都加倍。</p></div>
           </article>
           <article class="rule-item">
-            <img src="./assets/time-bonus-notebook-fast.webp" alt="" />
+            <img data-src="./assets/time-bonus-notebook-fast.webp" data-hires="./assets/time-bonus-notebook.png" alt="" decoding="async" />
             <div><h3>加秒筆記本</h3><p>每次增加 5 秒，沒有加時上限。</p></div>
           </article>
           <article class="rule-item">
-            <img src="./assets/teamwork-idea-powerup-fast.webp" alt="" />
+            <img data-src="./assets/teamwork-idea-powerup-fast.webp" data-hires="./assets/teamwork-idea-powerup.png" alt="" decoding="async" />
             <div><h3>同仁一起討論</h3><p>每局優先出現，漏接後會再來。收下 +3 分、補上目前缺少的名句字母 1 個，再增加 3 秒。</p></div>
           </article>
           <article class="rule-item">
-            <img src="./assets/slow-spawn-pocketwatch-fast.webp" alt="" />
+            <img data-src="./assets/slow-spawn-pocketwatch-fast.webp" data-hires="./assets/slow-spawn-pocketwatch.png" alt="" decoding="async" />
             <div><h3>慢速懷錶</h3><p>接下來 3 秒，物件出現速度變慢。</p></div>
           </article>
           <article class="rule-item rule-warn">
-            <img src="./assets/red-distraction-fast.webp" alt="" />
+            <img data-src="./assets/red-distraction-fast.webp" data-hires="./assets/red-distraction.webp" alt="" decoding="async" />
             <div><h3>紅色干擾</h3><p>電話、會議、待辦、刀房通知或交資料；誤點 −2 分並隨機失去一個字母。</p></div>
           </article>
           <article class="rule-item rule-warn">
-            <img src="./assets/time-penalty-timer-fast.webp" alt="" />
+            <img data-src="./assets/time-penalty-timer-fast.webp" data-hires="./assets/time-penalty-timer.png" alt="" decoding="async" />
             <div><h3>臨床急件</h3><p>隨機顯示「臨時約診／臨床案件／緊急交班」；誤點減少 5 秒。</p></div>
           </article>
         </div>
@@ -184,6 +184,6 @@
         </div>
       </section>
     </div>
-    <script src="./game.js?v=7.4.14"></script>
+    <script src="./game.js?v=7.4.15"></script>
   </body>
 </html>
