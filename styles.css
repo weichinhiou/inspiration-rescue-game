@@ -246,8 +246,8 @@ h1 { color: #fff8e9; text-shadow: 0 2px 10px #07191877; }
 .slot.has-idea:active, .slot.has-wrong:active, .slot.has-power:active { transform: scale(.94); }
 .slot.has-idea::before, .slot.has-wrong::before, .slot.has-power::before { filter: brightness(.88); }
 .idea-content, .block-content, .power-content { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 0; text-align: center; }
-.object-art { display: block; object-fit: contain; pointer-events: none; background: linear-gradient(135deg,#fff5c8aa,#d9c68a66); border-radius: 22%; filter: drop-shadow(0 9px 5px #061c1a72); }
-.image-fallback { min-height: 72px; background: linear-gradient(135deg,#fff5c8,#b8c9ad); opacity: .82; }
+.object-art { display: block; object-fit: contain; pointer-events: none; background: transparent; border-radius: 0; filter: drop-shadow(0 9px 5px #061c1a72); }
+.image-fallback { min-height: 72px; background: linear-gradient(135deg,#fff5c8,#b8c9ad); border-radius: 22%; opacity: .82; }
 .idea-art { width: min(88%, 128px); height: min(82%, 116px); position: absolute; left: 50%; top: -7%; transform: translateX(-50%); }
 .idea-label, .block-label, .power-label { position: relative; z-index: 2; max-width: 95%; margin-bottom: 3%; padding: 5px 9px 6px; border: 1px solid #d5b966; border-radius: 5px 7px 4px 6px; background: linear-gradient(135deg,#fff3b8,#e8cb76); color: #504229; font-size: clamp(10px,1.15vw,13px); font-weight: 900; line-height: 1.2; box-shadow: 0 4px 0 #8b633d, 0 7px 8px #071d1b77; transform: rotate(-2deg); }
 .letter-badge { z-index: 3; top: 6%; right: 4%; width: 26px; height: 26px; border: 2px solid #fff4cf; background: #275a4c; color: #fff6d8; font-size: 13px; box-shadow: 0 3px 6px #081d1b8a; }
