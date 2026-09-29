@@ -5,8 +5,8 @@
   const BONUS_SECONDS_PER_PICKUP = 5;
   const TEAMWORK_BONUS_POINTS = 3;
   const TEAMWORK_BONUS_SECONDS = 3;
-  const TEAMWORK_INITIAL_WAVE_INTERVAL = 2;
-  const TEAMWORK_FINAL_WAVE_INTERVAL = 1;
+  const TEAMWORK_INITIAL_WAVE_INTERVAL = 3;
+  const TEAMWORK_FINAL_WAVE_INTERVAL = 2;
   const TIME_TRAP_PENALTY = 5;
   const SLOW_SPAWN_DURATION_MS = 3000;
   const SLOW_SPAWN_FACTOR = 1.7;
@@ -863,8 +863,8 @@
         lastTeamworkSpawnWave = waveNumber;
         showPower(open[random(open.length)], "teamwork", 3800);
         if (firstOffer) showBanner("同仁一起討論出現了！收下可加分、補名句字母並增加時間。", "time", 3200);
-      } else if ((teamworkCollected || wordComplete) && Math.random() < POWER_ITEM_CHANCE) {
-        const eligiblePowerKinds = ["double", "slowSpawn", "slowSpawn", "slowSpawn", "timeBonus", "timeBonus"];
+      } else if (Math.random() < POWER_ITEM_CHANCE) {
+        const eligiblePowerKinds = ["double", "timeBonus", "slowSpawn"];
         showPower(open[random(open.length)], eligiblePowerKinds[random(eligiblePowerKinds.length)]);
       }
     }
